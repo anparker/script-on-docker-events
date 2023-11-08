@@ -22,7 +22,7 @@ The event processing config consists of:
 * An action which corresponds to a Docker event action. This describes what action has occurred to the
   object type. A few example object type/action pairs would be: `container:start`, `image:pull`.
 * A list of commands to run. These will be passed as an argument to `bash -c <command>` and will be run
-  asynchronously. Actor ID and attributes will be passed to command as environmental variables with an
+  asynchronously. Actor ID and attributes will be passed to commands as environmental variables with an
   EV_ prefix. (E.g. EV_ACTOR_ID=... or EV_ATTR_image=alpine:latest)
 
 At present, the Docker client is only configurable via the environment.

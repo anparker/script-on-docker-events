@@ -92,8 +92,7 @@ func runCommand(command string, actor evtypes.Actor) {
 	execCmd.Stdout = os.Stdout
 	execCmd.Stderr = os.Stderr
 
-	execCmd.Env = os.Environ()
-	execCmd.Env = append(execCmd.Env, "EV_ACTOR_ID=" + actor.ID)
+	execCmd.Env = append(os.Environ(), "EV_ACTOR_ID=" + actor.ID)
 	for key, value := range actor.Attributes {
 		execCmd.Env = append(execCmd.Env, "EV_ATTR_" + key + "=" + value)
 	}
