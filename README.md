@@ -1,7 +1,5 @@
 # Script on Docker Events
 
-[![Build Status](https://travis-ci.com/meowfaceman/script-on-docker-events.svg?branch=master)](https://travis-ci.com/meowfaceman/script-on-docker-events)
-
 Script on Docker Events is a small utility that will execute a set of commands when a Docker event occurs.
 I made this to automate a few things on my Unraid server. Rather than maintain your own Docker container for
 specific applications on Unraid, this should allow you to rely on the existing community applications without
@@ -24,7 +22,8 @@ The event processing config consists of:
 * An action which corresponds to a Docker event action. This describes what action has occurred to the
   object type. A few example object type/action pairs would be: `container:start`, `image:pull`.
 * A list of commands to run. These will be passed as an argument to `bash -c <command>` and will be run
-  asynchronously.
+  asynchronously. Actor ID and attributes will be passed to command as environmental variables with an
+  EV_ prefix. (E.g. EV_ACTOR_ID=... or EV_ATTR_image=alpine:latest)
 
 At present, the Docker client is only configurable via the environment.
 

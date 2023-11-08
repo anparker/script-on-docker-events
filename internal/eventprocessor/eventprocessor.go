@@ -7,6 +7,7 @@ import (
 	"os/exec"
 
 	"github.com/docker/docker/api/types"
+	evtypes "github.com/docker/docker/api/types/events"
 	docker "github.com/docker/docker/client"
 	"github.com/meowfaceman/script-on-docker-events/internal/config"
 )
@@ -57,7 +58,7 @@ func ProcessEvents(since int64) error {
 					if attributesMatch {
 						fmt.Printf("Event match: %s\n", eventAndScripts.ID)
 						for _, command := range eventAndScripts.Commands {
-							go runCommand(command)
+							go runCommand(command, event.Actor)
 						}
 					}
 				}
@@ -78,18 +79,24 @@ func processInitEvent(events []config.Event) {
 			fmt.Println("Running initialization...")
 			for _, command := range event.Commands {
 				// Run these synchronously to make sure they're all set up before we start trying to process other events.
-				runCommand(command)
+				runCommand(command, evtypes.Actor{ID: "init"})
 			}
 			break
 		}
 	}
 }
 
-func runCommand(command string) {
+func runCommand(command string, actor evtypes.Actor) {
 	execCmd := exec.Command("bash", "-c", command)
 
 	execCmd.Stdout = os.Stdout
 	execCmd.Stderr = os.Stderr
+
+	execCmd.Env = os.Environ()
+	execCmd.Env = append(execCmd.Env, "EV_ACTOR_ID=" + actor.ID)
+	for key, value := range actor.Attributes {
+		execCmd.Env = append(execCmd.Env, "EV_ATTR_" + key + "=" + value)
+	}
 
 	fmt.Printf("Executing %s...\n", command)
 	err := execCmd.Run()
