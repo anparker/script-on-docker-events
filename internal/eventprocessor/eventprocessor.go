@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"strings"
 
 	"github.com/docker/docker/api/types"
 	evtypes "github.com/docker/docker/api/types/events"
@@ -94,6 +95,7 @@ func runCommand(command string, actor evtypes.Actor) {
 
 	execCmd.Env = append(os.Environ(), "EV_ACTOR_ID=" + actor.ID)
 	for key, value := range actor.Attributes {
+		key = strings.ReplaceAll(key, ".", "_")
 		execCmd.Env = append(execCmd.Env, "EV_ATTR_" + key + "=" + value)
 	}
 
